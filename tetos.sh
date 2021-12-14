@@ -4,7 +4,15 @@ VM="$1"
 IP="$2"
 SLOW="$3"
 
-# took this function from https://www.linuxjournal.com/content/validating-ip-address-bash-script
+# TETOS (Tiny Enumeration Tmux Organizer Script) requires a name for the target machine as well as its IP address. 
+# * This script will open a Tmux session and create a tab for each common service identified via nmap
+#   - Some basic enumeration commands will be executed and redirected into the services/ folder
+#   - 4 nmap scans are executed: (1) Quick SYN scan on top TCP ports 
+#                                (2) Service version detection on on top ports 
+#                                (3) Scanning all TCP ports + default scripts & detecting service versions
+#                                (4) UDP ports
+# I usually use this script to perform my initial enumeration when doing a Boot 2 Root challenge
+
 function valid_ip()
 {
     local  ip=$1
@@ -52,7 +60,7 @@ if [ ! -z $VM ] && [ ! -z $IP ]; then
 	# For each port ...
 	i=1
 	USERNAMES="/usr/share/wordlists/seclists/Usernames/top-usernames-shortlist.txt"
-    	WEBDIR="/usr/share/wordlists/seclists/Discovery/Web-Content/common.txt"
+    WEBDIR="/usr/share/wordlists/seclists/Discovery/Web-Content/common.txt"
 	for p in $(cat ports.txt | grep -E "^[0-9]" | grep open | cut -d'/' -f1); do
         # Trying FTP Anonymous Login if port 21
         if [ "$p" == "21" ]; then
@@ -146,10 +154,9 @@ if [ ! -z $VM ] && [ ! -z $IP ]; then
 	# 3.4 nmap - UDP
 	tmux send-keys -t $VM:0 "wait; nmap -vvv -sU -oN UDP-scan.txt $IP -Pn &" C-m
 	# 3.5 Last nmap - vuln
-	tmux send-keys -t $VM:0 "wait; nmap -vvv -sS --script vuln -oN vuln-scan.txt $IP -Pn" C-m #-> we don't hit enter because it can be unecessary
+	tmux send-keys -t $VM:0 "wait; nmap -vvv -sS --script vuln -oN vuln-scan.txt $IP -Pn" # C-m -> we don't hit enter because it can be unecessary
 	tmux select-window -t $VM:0
 	tmux attach-session -t $VM
 else
 	echo "Usage: bash tetos.sh <VM_name> <IP> [slow]"
 fi
-
