@@ -150,6 +150,6 @@ if [ ! -z $VM ] && [ ! -z $IP ]; then
 	tmux select-window -t $VM:0
 	tmux attach-session -t $VM
 else
-	echo "Usage: bash tetos.sh <VM_name> <IP>"
+	echo "Usage: bash tetos.sh <VM_name> <IP> [slow]"
 fi
 
