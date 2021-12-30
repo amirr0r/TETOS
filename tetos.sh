@@ -60,7 +60,7 @@ if [ ! -z $VM ] && [ ! -z $IP ]; then
 	# For each port ...
 	i=1
 	USERNAMES="/usr/share/wordlists/seclists/Usernames/top-usernames-shortlist.txt"
-    WEBDIR="/usr/share/wordlists/seclists/Discovery/Web-Content/common.txt"
+    	WEBDIR="/usr/share/wordlists/seclists/Discovery/Web-Content/common.txt"
 	for p in $(cat ports.txt | grep -E "^[0-9]" | grep open | cut -d'/' -f1); do
         # Trying FTP Anonymous Login if port 21
         if [ "$p" == "21" ]; then
